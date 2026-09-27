@@ -1,5 +1,6 @@
 {
   "name": "git-push-reminder",
+  "publisher": "CharlesGBOYOU",
   "displayName": "Git Push Reminder",
   "description": "Rappels de commit et de push par depot Git.",
   "version": "0.0.1",

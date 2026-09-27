@@ -27,7 +27,7 @@ Extension VS Code qui surveille chaque dépôt Git ouvert et rappelle de publier
 ## Fonctionnement
 
 - Le délai commence uniquement lorsqu’un dépôt contient des fichiers modifiés ou des commits en avance sur sa branche distante.
-- Le premier rappel arrive après 30 minutes par défaut.
+- Le premier rappel arrive après 1 minute par défaut.
 - L’utilisateur peut reporter le rappel de 5, 10, 15, 20, 25 ou 30 minutes. Après trois reports, le rappel suivant est modal et ne propose plus de report.
 - Avant tout commit, l’extension précise que les fichiers suivis modifiés et non suivis seront inclus. Elle demande un commentaire puis effectue le commit et le push.
 - Les dépôts avec des commits déjà créés sont poussés sans créer de nouveau commit.
@@ -38,10 +38,10 @@ Chaque dépôt est traité indépendamment. Une erreur Git (branche distante non
 ## Paramètres
 
 - `gitPushReminder.enabled` : active les rappels (activé par défaut).
-- `gitPushReminder.intervalMinutes` : délai avant le premier rappel (30 minutes par défaut, configurable de 1 à 1 440).
+- `gitPushReminder.intervalMinutes` : délai avant le premier rappel (1 minute par défaut, configurable de 1 à 1 440).
 - `gitPushReminder.commitMessageMode` : `perRepository` pour demander un commentaire distinct, `shared` pour utiliser un commentaire commun.
 
-La commande **Git Push Reminder: Vérifier les dépôts maintenant** lance une vérification immédiate.
+Le bouton **$(git-commit) Push : N min** dans la barre d’état ouvre la saisie de la fréquence en minutes. La valeur est enregistrée pour l’espace de travail. La commande **Git Push Reminder: Modifier la fréquence des rappels** ouvre le même réglage, et **Git Push Reminder: Vérifier les dépôts maintenant** lance une vérification immédiate.
 
 ## Développement
 

@@ -20,6 +20,7 @@ export interface GitExtension {
 
 interface RepositoryStatus {
 	dirty: boolean;
+	changedFiles: number;
 	ahead: number;
 	hasUpstream: boolean;
 }
@@ -61,7 +62,8 @@ export async function readStatus(repositoryPath: string): Promise<RepositoryStat
 			ahead = 0;
 		}
 	}
-	return { dirty: porcelain.length > 0, ahead, hasUpstream };
+	const changedFiles = porcelain ? porcelain.split(/\r?\n/).filter(Boolean).length : 0;
+	return { dirty: changedFiles > 0, changedFiles, ahead, hasUpstream };
 }
 
 export class PushReminderService implements vscode.Disposable {
@@ -177,13 +179,29 @@ export class PushReminderService implements vscode.Disposable {
 	private async handleBatch(paths: string[], useSharedMessage: boolean): Promise<void> {
 		const statuses = await Promise.all(paths.map((path) => readStatus(path)));
 		const forced = paths.some((path) => (this.states[path]?.snoozes ?? 0) >= 3);
-		const labels = paths.map((path) => this.repositoryLabel(path));
-		const title = paths.length === 1 ? labels[0] : `${paths.length} dépôts : ${labels.join(', ')}`;
 		const hasLocalChanges = statuses.some((status) => status.dirty);
-		const choice = forced ? 'Pousser maintenant' : 'Commit et push';
+		const title = paths.length === 1 ? this.repositoryLabel(paths[0]) : `${paths.length} dépôts`;
+		const repositorySummary = paths.map((path, index) => {
+			const status = statuses[index];
+			const actions: string[] = [];
+			if (status.changedFiles > 0) {
+				actions.push(`${status.changedFiles} fichier(s) à committer`);
+			}
+			if (status.ahead > 0) {
+				actions.push(`${status.ahead} commit(s) à pousser`);
+			}
+			if (!status.hasUpstream) {
+				actions.push('aucune branche distante configurée');
+			}
+			return `• ${this.repositoryLabel(path)} : ${actions.join(' ; ') || 'aucune action nécessaire'}`;
+		}).join('\n');
+		const actionSummary = hasLocalChanges
+			? `Action prévue : créer un commit pour les fichiers modifiés${useSharedMessage ? ' avec un commentaire commun' : ' avec un commentaire par dépôt'}, puis pousser les commits en attente.`
+			: 'Action prévue : pousser les commits existants.';
+		const choice = 'Publier maintenant';
 		const buttons = forced ? [choice] : [choice, 'Reporter'];
 		const accepted = await vscode.window.showWarningMessage(
-			`Des mises à jour locales ou commits en attente ont été détectés dans ${title}.${hasLocalChanges ? ' Tous les fichiers modifiés, indexés ou non, seront inclus dans le commit.' : ''}`,
+			`Résumé des mises à jour dans ${title}\n${repositorySummary}\n\n${actionSummary}${hasLocalChanges ? '\nLes fichiers modifiés et non suivis seront inclus dans le commit.' : ''}`,
 			{ modal: true },
 			...buttons,
 		);

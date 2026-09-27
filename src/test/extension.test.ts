@@ -20,16 +20,16 @@ suite('Extension Test Suite', () => {
 			writeFileSync(join(repositoryPath, 'tracked.txt'), 'initial');
 			execFileSync('git', ['-C', repositoryPath, 'add', 'tracked.txt']);
 			execFileSync('git', ['-C', repositoryPath, 'commit', '-m', 'Initial']);
-			assert.deepStrictEqual(await readStatus(repositoryPath), { dirty: false, ahead: 1, hasUpstream: false });
+			assert.deepStrictEqual(await readStatus(repositoryPath), { dirty: false, changedFiles: 0, ahead: 1, hasUpstream: false });
 			execFileSync('git', ['-C', repositoryPath, 'remote', 'add', 'origin', remotePath]);
 			execFileSync('git', ['-C', repositoryPath, 'push', '--set-upstream', 'origin', 'main'], { stdio: 'ignore' });
 
 			writeFileSync(join(repositoryPath, 'untracked.txt'), 'new');
-			assert.deepStrictEqual(await readStatus(repositoryPath), { dirty: true, ahead: 0, hasUpstream: true });
+			assert.deepStrictEqual(await readStatus(repositoryPath), { dirty: true, changedFiles: 1, ahead: 0, hasUpstream: true });
 
 			execFileSync('git', ['-C', repositoryPath, 'add', 'untracked.txt']);
 			execFileSync('git', ['-C', repositoryPath, 'commit', '-m', 'Add file']);
-			assert.deepStrictEqual(await readStatus(repositoryPath), { dirty: false, ahead: 1, hasUpstream: true });
+			assert.deepStrictEqual(await readStatus(repositoryPath), { dirty: false, changedFiles: 0, ahead: 1, hasUpstream: true });
 		} finally {
 			rmSync(root, { recursive: true, force: true });
 		}

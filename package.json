@@ -21,6 +21,10 @@
       {
         "command": "git-push-reminder.checkNow",
         "title": "Git Push Reminder: Vérifier les dépôts maintenant"
+      },
+      {
+        "command": "git-push-reminder.changeInterval",
+        "title": "Git Push Reminder: Modifier la fréquence des rappels"
       }
     ],
     "configuration": {
@@ -33,7 +37,7 @@
         },
         "gitPushReminder.intervalMinutes": {
           "type": "number",
-          "default": 30,
+          "default": 1,
           "minimum": 1,
           "maximum": 1440,
           "description": "Délai en minutes avant le premier rappel après de nouveaux changements."

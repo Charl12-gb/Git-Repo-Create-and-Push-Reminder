@@ -1,4 +1,4 @@
-# Git Push Reminder
+# Git Push Reminder by CharlesGBOYOU
 
 Extension VS Code qui surveille chaque dépôt Git ouvert et rappelle de publier les changements locaux ou les commits qui ne sont pas encore poussés.
 

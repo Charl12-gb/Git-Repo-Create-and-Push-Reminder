@@ -37,7 +37,7 @@
         },
         "gitPushReminder.intervalMinutes": {
           "type": "number",
-          "default": 1,
+          "default": 15,
           "minimum": 1,
           "maximum": 1440,
           "description": "Délai en minutes avant le premier rappel après de nouveaux changements."
